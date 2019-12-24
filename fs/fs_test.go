@@ -100,14 +100,16 @@ func TestOpen(t *testing.T) {
 					size:    int64(subdirIndexHTMLHeader.UncompressedSize64),
 				},
 				"/": {
-					isDir: true,
-					mode:  os.ModeDir | 0755,
-					name:  "/",
+					isDir:   true,
+					mode:    os.ModeDir | 0755,
+					name:    "/",
+					modTime: time.Now().UTC(),
 				},
 				"/sub_dir": {
-					isDir: true,
-					mode:  os.ModeDir | 0755,
-					name:  "/sub_dir",
+					isDir:   true,
+					mode:    os.ModeDir | 0755,
+					name:    "/sub_dir",
+					modTime: time.Now().UTC(),
 				},
 			},
 		},
@@ -141,19 +143,22 @@ func TestOpen(t *testing.T) {
 					size:    int64(deepCHTMLHeader.UncompressedSize64),
 				},
 				"/": {
-					isDir: true,
-					mode:  os.ModeDir | 0755,
-					name:  "/",
+					isDir:   true,
+					mode:    os.ModeDir | 0755,
+					name:    "/",
+					modTime: time.Now().UTC(),
 				},
 				"/aa": {
-					isDir: true,
-					mode:  os.ModeDir | 0755,
-					name:  "/aa",
+					isDir:   true,
+					mode:    os.ModeDir | 0755,
+					name:    "/aa",
+					modTime: time.Now().UTC(),
 				},
 				"/aa/bb": {
-					isDir: true,
-					mode:  os.ModeDir | 0755,
-					name:  "/aa/bb",
+					isDir:   true,
+					mode:    os.ModeDir | 0755,
+					name:    "/aa/bb",
+					modTime: time.Now().UTC(),
 				},
 			},
 		},
@@ -174,8 +179,7 @@ func TestOpen(t *testing.T) {
 	}
 	for _, tc := range tests {
 		t.Run(tc.description, func(t *testing.T) {
-			Register(tc.zipData)
-			fs, err := New()
+			fs, err := New(tc.zipData)
 			if err != nil {
 				t.Errorf("New() = %v", err)
 				return
@@ -205,7 +209,7 @@ func TestOpen(t *testing.T) {
 				if got, want := stat.IsDir(), wantFile.isDir; got != want {
 					t.Errorf("IsDir(%v) = %t; want %t", name, got, want)
 				}
-				if got, want := stat.ModTime(), wantFile.modTime; got != want {
+				if got, want := stat.ModTime(), wantFile.modTime; got.Equal(want) {
 					t.Errorf("ModTime(%v) = %v; want %v", name, got, want)
 				}
 				if got, want := stat.Mode(), wantFile.mode; got != want {
@@ -223,8 +227,7 @@ func TestOpen(t *testing.T) {
 }
 
 func TestWalk(t *testing.T) {
-	Register(mustZipTree("../testdata/deep"))
-	fs, err := New()
+	fs, err := New(mustZipTree("../testdata/deep"))
 	if err != nil {
 		t.Errorf("New() = %v", err)
 		return
@@ -255,8 +258,7 @@ func TestWalk(t *testing.T) {
 }
 
 func TestHTTPFile_Readdir(t *testing.T) {
-	Register(mustZipTree("../testdata/readdir"))
-	fs, err := New()
+	fs, err := New(mustZipTree("../testdata/readdir"))
 	if err != nil {
 		t.Errorf("New() = %v", err)
 		return
@@ -353,8 +355,7 @@ func TestHTTPFile_Readdir(t *testing.T) {
 // to return the expected result.
 func TestOpen_Parallel(t *testing.T) {
 	indexHTMLData := mustReadFile("../testdata/index/index.html")
-	Register(mustZipTree("../testdata/index"))
-	fs, err := New()
+	fs, err := New(mustZipTree("../testdata/index"))
 	if err != nil {
 		t.Fatalf("New() = %v", err)
 	}

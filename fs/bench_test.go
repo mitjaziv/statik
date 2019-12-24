@@ -17,8 +17,7 @@ package fs
 import "testing"
 
 func BenchmarkOpen(b *testing.B) {
-	Register(mustZipTree("../testdata/index"))
-	fs, err := New()
+	fs, err := New(mustZipTree("../testdata/index"))
 	if err != nil {
 		b.Fatalf("New() = %v", err)
 	}
@@ -34,8 +33,7 @@ func BenchmarkOpen(b *testing.B) {
 }
 
 func BenchmarkOpenDeep(b *testing.B) {
-	Register(mustZipTree("../testdata/deep"))
-	fs, err := New()
+	fs, err := New(mustZipTree("../testdata/deep"))
 	if err != nil {
 		b.Fatalf("New() = %v", err)
 	}

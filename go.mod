@@ -1,3 +1,3 @@
-module github.com/rakyll/statik
+module github.com/mitjaziv/statik
 
-go 1.12
+go 1.13

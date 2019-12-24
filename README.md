@@ -1,16 +1,18 @@
 # statik
 
-[![Build Status](https://travis-ci.org/rakyll/statik.svg?branch=master)](https://travis-ci.org/rakyll/statik)
+[![Build Status](https://travis-ci.org/mitjaziv/statik.svg?branch=master)](https://travis-ci.org/mitjaziv/statik)
 
 statik allows you to embed a directory of static files into your Go binary to be later served from an http.FileSystem.
 
-Is this a crazy idea? No, not necessarily. If you're building a tool that has a Web component, you typically want to serve some images, CSS and JavaScript. You like the comfort of distributing a single binary, so you don't want to mess with deploying them elsewhere. If your static files are not large in size and will be browsed by a few people, statik is a solution you are looking for.
+This project is fork from [rakyll/statik](http://github.com/rakyll/statik) with some changes:
+- Go 1.13.x compatible
+- Assets are loaded as string instead of Register func
 
 ## Usage
 
 Install the command line tool first.
 
-	go get github.com/rakyll/statik
+	go get github.com/mitjaziv/statik
 
 statik is a tiny program that reads a directory and generates a source file that contains its contents. The generated source file registers the directory contents to be used by statik file system.
 
@@ -26,14 +28,13 @@ In your program, all your need to do is to import the generated package, initial
 
 ~~~ go
 import (
-  "github.com/rakyll/statik/fs"
-
-  _ "./statik" // TODO: Replace with the absolute import path
+	"github.com/mitjaziv/statik/example/statik"
+	"github.com/mitjaziv/statik/fs"
 )
 
   // ...
 
-  statikFS, err := fs.New()
+  statikFS, err := fs.New(statik.Assets)
   if err != nil {
     log.Fatal(err)
   }
@@ -49,14 +50,13 @@ You can also read the content of a single file:
 
 ~~~ go
 import (
-  "github.com/rakyll/statik/fs"
-
-  _ "./statik" // TODO: Replace with the absolute import path
+	"github.com/mitjaziv/statik/example/statik"
+	"github.com/mitjaziv/statik/fs"
 )
 
   // ...
 
-  statikFS, err := fs.New()
+  statikFS, err := fs.New(statik.Assets)
   if err != nil {
     log.Fatal(err)
   }
@@ -75,6 +75,6 @@ import (
   fmt.Println(string(contents))
 ~~~
 
-There is also a working example under [example](https://github.com/rakyll/statik/tree/master/example) directory, follow the instructions to build and run it.
+There is also a working example under [example](https://github.com/mitjaziv/statik/tree/master/example) directory, follow the instructions to build and run it.
 
 Note: The idea and the implementation are hijacked from [camlistore](http://camlistore.org/). I decided to decouple it from its codebase due to the fact I'm actively in need of a similar solution for many of my projects.
